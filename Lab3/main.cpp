@@ -2,9 +2,10 @@
 #include <cmath>
 #define FOR
 
-double start = 0;
-double end = 1;
-int count = 13;
+
+constexpr double start = 0;
+constexpr double end = 1;
+constexpr int count = 13;
 
 template<typename T>
 static void printValues(T x,T y) {
@@ -12,43 +13,48 @@ static void printValues(T x,T y) {
     <<std::endl<<"y = "<<y<<std::endl<<std::endl;
 }
 
-static int Fac(const int number) {
-    if (number > 1) {
-        return number * Fac(number - 1);
-    }
-    return number;
+double f(double x) {
+    return std::exp(-x) + std::sin(2 * x) - 1.5 * x * x;
 }
 
-double Intergral() {
-    double step = (end - start) / (count - 1);
-    double x = 0.0;
-    double y = 0.0;
-    double result = 0;
+double Integral() {
+    if (count <= 0 || end <= start) {
+        return 0.0;
+    }
+
+    const double step = (end - start) / count;
+    double result = 0.0;
+
+#if (defined(FOR) + defined(WHILE) + defined(DOWHILE)) != 1
+#error "Define exactly one of FOR, WHILE, or DOWHILE"
+#endif
+
 #ifdef FOR
-    for (double i = start;i <= end;i += step) {
-        x = i;
-        y = exp(-x) + sin(2*x) - 1.5*x*x;
-        result += step * y;
+    for (int i = 0; i < count; ++i) {
+        const double x = start + i * step;
+        result += f(x) * step;
     }
 #endif
+
 #ifdef WHILE
-    double i = 0;
-    while (i <= end) {
-        x = i;
-        y = exp(-x) + sin(2*x) - 1.5*x*x;
-        result += step * y;
-        i += step;
+    int i = 0;
+    while (i < count) {
+        const double x = start + i * step;
+        result += f(x) * step;
+        ++i;
     }
 #endif
+
 #ifdef DOWHILE
+    int i = 0;
     do {
-        x = i;
-        y = exp(-x) + sin(2 * x) - 1.5 * x * x;
-        result += step * y;
-        i += step;
-    } while (i <= end);
+        const double x = start + i * step;
+        result += f(x) * step;
+        ++i;
+    } while (i < count);
 #endif
-    std::cout<<result<<std::endl;
+
+    std::cout << result << '\n';
     return result;
 }
 
@@ -57,13 +63,14 @@ double Exercise2(const double x,const double eps) {
         throw std::invalid_argument("Помилка: x має задовольняти умову 0 < |x| < 1.");
     if (eps <= 0)
         throw std::invalid_argument("Помилка: eps має бути більше 0.");
-    double x2 = x * x;
     double term = 1.0;
     double S = term;
     int k = 0;
 
     while (std::abs(term) >= eps) {
-        term *= (2.0 * k + 3.0) / ((k + 1.0) * (2.0 * k + 1.0)) * x2;
+        term *= (2.0 * k + 3) * x * x
+              / ((k + 1) * (2.0 * k + 1));
+
         S += term;
         ++k;
     }
@@ -71,6 +78,6 @@ double Exercise2(const double x,const double eps) {
 }
 
 int main() {
-    std::cout<<Exercise2(0.8,0.0001)<<std::endl;
+    std::cout<<Exercise2(0.5,0.00001)<<std::endl;
     return 0;
 }
