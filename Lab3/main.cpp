@@ -2,7 +2,6 @@
 #include <cmath>
 #define FOR
 
-
 constexpr double start = 0;
 constexpr double end = 1;
 constexpr int count = 13;
@@ -58,26 +57,35 @@ double Integral() {
     return result;
 }
 
-double Exercise2(const double x,const double eps) {
+int factorial(int n) {
+    int result = 1;
+    for (int i = 1; i <= n; ++i) {
+        result *= i;
+    }
+    return result;
+}
+
+void Exercise2(const double x,const double eps) {
     if (x == 0 || std::abs(x) >= 1)
         throw std::invalid_argument("Помилка: x має задовольняти умову 0 < |x| < 1.");
     if (eps <= 0)
         throw std::invalid_argument("Помилка: eps має бути більше 0.");
+    double Y = (1.0 + 2.0 * x * x) * std::exp(x * x);
     double term = 1.0;
     double S = term;
     int k = 0;
 
     while (std::abs(term) >= eps) {
-        term *= (2.0 * k + 3) * x * x
-              / ((k + 1) * (2.0 * k + 1));
-
+        k++;
+        term *= ((2.0 * k + 1.0) / (2.0 * k - 1.0)) * ((x * x) / k);
         S += term;
-        ++k;
     }
-    return S;
+    std::cout << Y << std::endl;
+    std::cout << S << std::endl;
+    std::cout <<S - Y<< std::endl;
 }
 
 int main() {
-    std::cout<<Exercise2(0.5,0.00001)<<std::endl;
+    Exercise2(0.5,0.0000001);
     return 0;
 }
