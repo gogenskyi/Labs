@@ -1,6 +1,7 @@
 #include <random>
 #include <algorithm>
 #include <iostream>
+
 #define SIZE 32
 
 namespace exercise2 {
@@ -50,8 +51,6 @@ int exercise1(int* arr) {
 }
 
 int main() {
-    auto arr = new int[SIZE];
-    fill_array(arr);
-    std::cout<<exercise1(arr);
+    exercise2::ex2_main();
     return 0;
 }
